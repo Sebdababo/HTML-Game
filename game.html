@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 800;
+        canvas.height = 400;
+        document.body.appendChild(canvas);
+
+        const player = {
+            x: 50,
+            y: 200,
+            width: 30,
+            height: 30,
+            speed: 5,
+            jumping: false,
+            velocityY: 0
+        };
+
+        const keys = {};
+
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+            if (keys['ArrowLeft']) player.x -= player.speed;
+            if (keys['ArrowRight']) player.x += player.speed;
+            if (keys['ArrowUp'] && !player.jumping) {
+                player.jumping = true;
+                player.velocityY = -10;
+            }
+
+            player.velocityY += 0.5;
+            player.y += player.velocityY;
+
+            if (player.y + player.height > canvas.height) {
+                player.y = canvas.height - player.height;
+                player.jumping = false;
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        document.addEventListener('keydown', e => keys[e.code] = true);
+        document.addEventListener('keyup', e => keys[e.code] = false);
+
+        gameLoop();
+    </script>
+</body>
+</html>
